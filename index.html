@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Optimization -->
+    <title>Shashank Kumar | AI & Web Developer Portfolio</title>
+    <meta name="description" content="Portfolio of Shashank Kumar, an Engineering student at Sarala Birla University specializing in Artificial Intelligence, Computer Vision, FastAPI, and Full Stack Web Applications.">
+    <meta name="keywords" content="Shashank Kumar, Shashank1197, Portfolio, AI Developer, Web Developer, Sarala Birla University, Dhanbad, Jharkhand, Python, FastAPI, Machine Learning, Computer Vision">
+    <meta name="author" content="Shashank Kumar">
+    
+    <!-- Open Graph Metadata for Social Media -->
+    <meta property="og:title" content="Shashank Kumar | AI & Web Developer Portfolio">
+    <meta property="og:description" content="Explore projects in Artificial Intelligence, Computer Vision, and Web Engineering built by Shashank Kumar.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://github.com/Shashank1197">
+    <meta property="og:image" content="https://avatars.githubusercontent.com/u/170442157?v=4">
+    
+    <!-- CSS and Fonts -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- Canvas Particle Background Container -->
+    <div id="canvas-container">
+        <canvas id="particle-canvas"></canvas>
+    </div>
+
+    <!-- Glowing Backdrop Blobs -->
+    <div class="blur-blob" id="blob-1"></div>
+    <div class="blur-blob" id="blob-2"></div>
+
+    <!-- Header & Navigation -->
+    <header id="main-header">
+        <div class="container nav-container">
+            <a href="#" class="logo" id="header-logo">
+                <span>Shashank</span>_
+            </a>
+            
+            <ul class="nav-links" id="navigation-list">
+                <li><a href="#hero" class="active" id="nav-home">Home</a></li>
+                <li><a href="#about" id="nav-about">About</a></li>
+                <li><a href="#skills" id="nav-skills">Skills</a></li>
+                <li><a href="#projects" id="nav-projects">Projects</a></li>
+                <li><a href="#terminal" id="nav-terminal">AI Terminal</a></li>
+                <li><a href="#contact" id="nav-contact">Contact</a></li>
+            </ul>
+
+            <button class="mobile-menu-btn" id="mobile-toggle" aria-label="Toggle Menu">
+                <i class="fa-solid fa-bars-staggered"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        
+        <!-- Hero Section -->
+        <section id="hero" class="hero">
+            <div class="container hero-grid">
+                <div class="hero-content animate-on-scroll">
+                    <div class="hero-tagline" id="hero-status">
+                        <span></span> Available for Collaborations & Internships
+                    </div>
+                    <h1 class="hero-title" id="main-heading-title">
+                        Building the Future <br>With <span>AI & Code</span>
+                    </h1>
+                    <h2 class="hero-subtitle" id="main-heading-subtitle">Shashank Kumar</h2>
+                    <p class="hero-bio" id="main-heading-bio">
+                        Computer Science & Engineering Graduate (2022-2026 Batch) from Sarala Birla University. Passionate about developing intelligent software, artificial intelligence agents, local language models, and robust web applications.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="#projects" class="btn btn-primary" id="hero-btn-projects">
+                            View Work <i class="fa-solid fa-arrow-right-long"></i>
+                        </a>
+                        <a href="#contact" class="btn btn-secondary" id="hero-btn-contact">
+                            Let's Talk <i class="fa-regular fa-envelope"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="hero-visual animate-on-scroll">
+                    <div class="glass avatar-card" id="profile-summary-card">
+                        <div class="avatar-wrapper">
+                            <div class="avatar-glow"></div>
+                            <img src="https://avatars.githubusercontent.com/u/170442157?v=4" alt="Shashank Kumar" class="avatar-image" id="profile-image">
+                        </div>
+                        <h3 id="profile-name">Shashank Kumar</h3>
+                        <p class="role" id="profile-role">@Shashank1197</p>
+                        
+                        <div class="avatar-stats" id="profile-stats">
+                            <div class="stat-item" id="stat-repos">
+                                <span class="num">20</span>
+                                <span class="label">Repos</span>
+                            </div>
+                            <div class="stat-item" id="stat-followers">
+                                <span class="num">8</span>
+                                <span class="label">Followers</span>
+                            </div>
+                            <div class="stat-item" id="stat-exp">
+                                <span class="num">2+</span>
+                                <span class="label">Years Code</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about">
+            <div class="container">
+                <h2 class="section-title animate-on-scroll" id="about-heading">About Me</h2>
+                <p class="section-subtitle animate-on-scroll" id="about-intro">Learn more about my background, education, and development approach.</p>
+                
+                <div class="about-grid">
+                    <div class="glass about-info-card animate-on-scroll" id="about-main-card">
+                        <h3>A Student of Code & Algorithms</h3>
+                        <p>
+                            I am a Computer Science & Engineering graduate (2022-2026 Batch) from <strong>Sarala Birla University, Ranchi</strong>. Based in Dhanbad, Jharkhand, I spend most of my time coding intelligent web backends and deep diving into machine learning concepts.
+                        </p>
+                        <p>
+                            My engineering path is guided by a curiosity to make machines "understand" the human environment—whether it is speech transcripts via voice tools, face recognition databases, or hand movement controls. I enjoy turning abstract research papers into practical, local software scripts.
+                        </p>
+                    </div>
+
+                    <div class="about-highlight-box animate-on-scroll" id="about-highlights-grid">
+                        <div class="glass highlight-item" id="highlight-education">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <h4>Education</h4>
+                            <p>Sarala Birla University, Ranchi. B.Tech in Computer Science & Engineering (2022-2026 Batch).</p>
+                        </div>
+                        <div class="glass highlight-item" id="highlight-philosophy">
+                            <i class="fa-solid fa-brain"></i>
+                            <h4>Core Philosophy</h4>
+                            <p>Privacy-first, offline-ready artificial intelligence apps operating locally.</p>
+                        </div>
+                        <div class="glass highlight-item" id="highlight-webdev">
+                            <i class="fa-solid fa-layer-group"></i>
+                            <h4>Web Engineering</h4>
+                            <p>Clean REST APIs using FastAPI, robust Node.js workflows, and standard frontend styles.</p>
+                        </div>
+                        <div class="glass highlight-item" id="highlight-ai">
+                            <i class="fa-solid fa-robot"></i>
+                            <h4>AI & Automation</h4>
+                            <p>Familiar with RAG pipelines, voice assistants, and computer vision tools like OpenCV.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills">
+            <div class="container">
+                <h2 class="section-title animate-on-scroll" id="skills-heading">Tech Stack & Expertise</h2>
+                <p class="section-subtitle animate-on-scroll" id="skills-intro">Languages and tools I use to turn ideas into scalable digital platforms.</p>
+                
+                <div class="skills-container">
+                    <div class="glass skills-category animate-on-scroll" id="skills-languages-card">
+                        <h3><i class="fa-solid fa-code"></i> Languages & Frameworks</h3>
+                        <div class="skills-list" id="skills-languages-list">
+                            <div class="skill-tag active-tech"><i class="fa-brands fa-python"></i> Python</div>
+                            <div class="skill-tag active-tech"><i class="fa-brands fa-js"></i> JavaScript</div>
+                            <div class="skill-tag active-tech"><i class="fa-brands fa-php"></i> PHP</div>
+                            <div class="skill-tag"><i class="fa-solid fa-database"></i> SQL / MySQL</div>
+                            <div class="skill-tag"><i class="fa-brands fa-node-js"></i> Node.js & Express</div>
+                            <div class="skill-tag"><i class="fa-solid fa-gears"></i> FastAPI</div>
+                            <div class="skill-tag"><i class="fa-brands fa-html5"></i> HTML5 & CSS3</div>
+                        </div>
+                    </div>
+
+                    <div class="glass skills-category animate-on-scroll" id="skills-ai-card">
+                        <h3><i class="fa-solid fa-microchip"></i> AI, CV & Developer Tools</h3>
+                        <div class="skills-list" id="skills-ai-list">
+                            <div class="skill-tag"><i class="fa-solid fa-eye"></i> OpenCV & MediaPipe</div>
+                            <div class="skill-tag"><i class="fa-solid fa-terminal"></i> Git & GitHub</div>
+                            <div class="skill-tag"><i class="fa-solid fa-cubes"></i> RAG & Vector Databases</div>
+                            <div class="skill-tag"><i class="fa-solid fa-microphone"></i> Whisper ASR</div>
+                            <div class="skill-tag"><i class="fa-solid fa-network-wired"></i> Local LLMs (Ollama)</div>
+                            <div class="skill-tag"><i class="fa-solid fa-server"></i> FastAPI Backends</div>
+                            <div class="skill-tag"><i class="fa-solid fa-cloud-arrow-up"></i> Docker & CI/CD</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects">
+            <div class="container">
+                <h2 class="section-title animate-on-scroll" id="projects-heading">Featured Repositories</h2>
+                <p class="section-subtitle animate-on-scroll" id="projects-intro">Selected repositories representing my software engineering journey from GitHub.</p>
+                
+                <div class="projects-header animate-on-scroll">
+                    <div class="project-filters" id="projects-filter-bar">
+                        <button class="filter-btn active" data-filter="all" id="filter-all">All Projects</button>
+                        <button class="filter-btn" data-filter="ai" id="filter-ai">AI & Computer Vision</button>
+                        <button class="filter-btn" data-filter="web" id="filter-web">Web Applications</button>
+                    </div>
+                </div>
+
+                <div class="projects-grid" id="projects-showcase-grid">
+                    
+                    <!-- Project 1: AI Meeting Assistant -->
+                    <div class="glass project-card animate-on-scroll" data-category="ai" id="card-ai-meeting">
+                        <div class="project-card-header">
+                            <div class="project-icon"><i class="fa-solid fa-microphone-lines"></i></div>
+                            <div class="project-links">
+                                <a href="https://github.com/Shashank1197/AI-meeting-assistant-" target="_blank" aria-label="GitHub Repository"><i class="fa-brands fa-github"></i></a>
+                            </div>
+                        </div>
+                        <div class="project-card-body">
+                            <h3 class="project-title">AI Meeting Assistant</h3>
+                            <p class="project-desc">Speech-to-text transcriber using OpenAI's Whisper, automated meeting summaries using LLMs, and a RAG pipeline for custom querying.</p>
+                            <div class="project-tech-list">
+                                <span class="project-tech-tag">Python</span>
+                                <span class="project-tech-tag">FastAPI</span>
+                                <span class="project-tech-tag">RAG</span>
+                                <span class="project-tech-tag">Whisper</span>
+                                <span class="project-tech-tag">CI/CD</span>
+                            </div>
+                        </div>
+                        <div class="project-card-footer">
+                            <div class="project-lang">
+                                <span class="lang-color-dot" style="background-color: #3572A5;"></span> Python
+                            </div>
+                            <div class="project-stats">
+                                <span><i class="fa-regular fa-star"></i> 0</span>
+                                <span><i class="fa-solid fa-code-fork"></i> 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 2: Facial Recognition Attendance -->
+                    <div class="glass project-card animate-on-scroll" data-category="ai" id="card-face-attendance">
+                        <div class="project-card-header">
+                            <div class="project-icon"><i class="fa-solid fa-id-card-clip"></i></div>
+                            <div class="project-links">
+                                <a href="https://github.com/Shashank1197/facial-recognition-attendance" target="_blank" aria-label="GitHub Repository"><i class="fa-brands fa-github"></i></a>
+                            </div>
+                        </div>
+                        <div class="project-card-body">
+                            <h3 class="project-title">Face-Recognition Attendance</h3>
+                            <p class="project-desc">A contactless, computer vision-based attendance log registration dashboard. Uses deep face-recognition libraries to log data into a MySQL DB.</p>
+                            <div class="project-tech-list">
+                                <span class="project-tech-tag">Python</span>
+                                <span class="project-tech-tag">OpenCV</span>
+                                <span class="project-tech-tag">Dlib</span>
+                                <span class="project-tech-tag">MySQL</span>
+                            </div>
+                        </div>
+                        <div class="project-card-footer">
+                            <div class="project-lang">
+                                <span class="lang-color-dot" style="background-color: #3572A5;"></span> Python
+                            </div>
+                            <div class="project-stats">
+                                <span><i class="fa-regular fa-star"></i> 1</span>
+                                <span><i class="fa-solid fa-code-fork"></i> 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 3: B2B Outreach Engine -->
+                    <div class="glass project-card animate-on-scroll" data-category="web" id="card-b2b-outreach">
+                        <div class="project-card-header">
+                            <div class="project-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+                            <div class="project-links">
+                                <a href="https://github.com/Shashank1197/B2B-Outreach-Engine-" target="_blank" aria-label="GitHub Repository"><i class="fa-brands fa-github"></i></a>
+                            </div>
+                        </div>
+                        <div class="project-card-body">
+                            <h3 class="project-title">B2B Outreach Engine</h3>
+                            <p class="project-desc">Automated cold-outreach automation workflow designed in JavaScript, containing search/scraping functions and scheduled email dispatches.</p>
+                            <div class="project-tech-list">
+                                <span class="project-tech-tag">JavaScript</span>
+                                <span class="project-tech-tag">Node.js</span>
+                                <span class="project-tech-tag">Puppeteer</span>
+                                <span class="project-tech-tag">Nodemailer</span>
+                            </div>
+                        </div>
+                        <div class="project-card-footer">
+                            <div class="project-lang">
+                                <span class="lang-color-dot" style="background-color: #f1e05a;"></span> JavaScript
+                            </div>
+                            <div class="project-stats">
+                                <span><i class="fa-regular fa-star"></i> 0</span>
+                                <span><i class="fa-solid fa-code-fork"></i> 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 4: Offline AI Assistant -->
+                    <div class="glass project-card animate-on-scroll" data-category="ai" id="card-offline-assistant">
+                        <div class="project-card-header">
+                            <div class="project-icon"><i class="fa-solid fa-user-shield"></i></div>
+                            <div class="project-links">
+                                <a href="https://github.com/Shashank1197/Offline-AI-Assistant-" target="_blank" aria-label="GitHub Repository"><i class="fa-brands fa-github"></i></a>
+                            </div>
+                        </div>
+                        <div class="project-card-body">
+                            <h3 class="project-title">Offline AI Assistant</h3>
+                            <p class="project-desc">A privacy-focused desktop assistant running completely disconnected. Integrates local models via Ollama with whisper wake words.</p>
+                            <div class="project-tech-list">
+                                <span class="project-tech-tag">Python</span>
+                                <span class="project-tech-tag">Ollama</span>
+                                <span class="project-tech-tag">Whisper</span>
+                                <span class="project-tech-tag">PyTTSx3</span>
+                            </div>
+                        </div>
+                        <div class="project-card-footer">
+                            <div class="project-lang">
+                                <span class="lang-color-dot" style="background-color: #3572A5;"></span> Python
+                            </div>
+                            <div class="project-stats">
+                                <span><i class="fa-regular fa-star"></i> 0</span>
+                                <span><i class="fa-solid fa-code-fork"></i> 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 5: eVcharge -->
+                    <div class="glass project-card animate-on-scroll" data-category="web" id="card-evcharge">
+                        <div class="project-card-header">
+                            <div class="project-icon"><i class="fa-solid fa-charging-station"></i></div>
+                            <div class="project-links">
+                                <a href="https://github.com/Shashank1197/eVcharge" target="_blank" aria-label="GitHub Repository"><i class="fa-brands fa-github"></i></a>
+                            </div>
+                        </div>
+                        <div class="project-card-body">
+                            <h3 class="project-title">eVcharge Station Finder</h3>
+                            <p class="project-desc">Web-based platform helping EV users locate charging centers, inspect queue rates, review ports, and book slots in advance.</p>
+                            <div class="project-tech-list">
+                                <span class="project-tech-tag">HTML</span>
+                                <span class="project-tech-tag">CSS</span>
+                                <span class="project-tech-tag">JavaScript</span>
+                                <span class="project-tech-tag">Leaflet Maps</span>
+                            </div>
+                        </div>
+                        <div class="project-card-footer">
+                            <div class="project-lang">
+                                <span class="lang-color-dot" style="background-color: #e34c26;"></span> HTML
+                            </div>
+                            <div class="project-stats">
+                                <span><i class="fa-regular fa-star"></i> 0</span>
+                                <span><i class="fa-solid fa-code-fork"></i> 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 6: Hand Gesture Control System -->
+                    <div class="glass project-card animate-on-scroll" data-category="ai" id="card-hand-gesture">
+                        <div class="project-card-header">
+                            <div class="project-icon"><i class="fa-solid fa-hand"></i></div>
+                            <div class="project-links">
+                                <a href="https://github.com/Shashank1197/Hand-gesture-control-system" target="_blank" aria-label="GitHub Repository"><i class="fa-brands fa-github"></i></a>
+                            </div>
+                        </div>
+                        <div class="project-card-body">
+                            <h3 class="project-title">Hand Gesture Control</h3>
+                            <p class="project-desc">Control computer hardware functions like system volumes, display brightness, or screen navigation pointers using hand landmark tracking.</p>
+                            <div class="project-tech-list">
+                                <span class="project-tech-tag">Python</span>
+                                <span class="project-tech-tag">MediaPipe</span>
+                                <span class="project-tech-tag">OpenCV</span>
+                                <span class="project-tech-tag">PyAutoGUI</span>
+                            </div>
+                        </div>
+                        <div class="project-card-footer">
+                            <div class="project-lang">
+                                <span class="lang-color-dot" style="background-color: #3572A5;"></span> Python
+                            </div>
+                            <div class="project-stats">
+                                <span><i class="fa-regular fa-star"></i> 0</span>
+                                <span><i class="fa-solid fa-code-fork"></i> 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 7: Virtual Police Station -->
+                    <div class="glass project-card animate-on-scroll" data-category="web" id="card-virtual-police">
+                        <div class="project-card-header">
+                            <div class="project-icon"><i class="fa-solid fa-building-shield"></i></div>
+                            <div class="project-links">
+                                <a href="https://github.com/Shashank1197/Virtual-Police-Station" target="_blank" aria-label="GitHub Repository"><i class="fa-brands fa-github"></i></a>
+                            </div>
+                        </div>
+                        <div class="project-card-body">
+                            <h3 class="project-title">Virtual Police Station</h3>
+                            <p class="project-desc">A secure e-governance portal for virtual FIR filings, citizen support, status verifications, and real-time administrative messaging panels.</p>
+                            <div class="project-tech-list">
+                                <span class="project-tech-tag">Node.js</span>
+                                <span class="project-tech-tag">Express</span>
+                                <span class="project-tech-tag">EJS Templates</span>
+                                <span class="project-tech-tag">MongoDB</span>
+                            </div>
+                        </div>
+                        <div class="project-card-footer">
+                            <div class="project-lang">
+                                <span class="lang-color-dot" style="background-color: #c58e57;"></span> EJS
+                            </div>
+                            <div class="project-stats">
+                                <span><i class="fa-regular fa-star"></i> 0</span>
+                                <span><i class="fa-solid fa-code-fork"></i> 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 8: Bookwala -->
+                    <div class="glass project-card animate-on-scroll" data-category="web" id="card-bookwala">
+                        <div class="project-card-header">
+                            <div class="project-icon"><i class="fa-solid fa-book-open"></i></div>
+                            <div class="project-links">
+                                <a href="https://github.com/Shashank1197/Bookwala" target="_blank" aria-label="GitHub Repository"><i class="fa-brands fa-github"></i></a>
+                            </div>
+                        </div>
+                        <div class="project-card-body">
+                            <h3 class="project-title">Bookwala Book Store</h3>
+                            <p class="project-desc">PHP and SQL-based bookstore web application, including shopping cart management, user accounts, and billing transaction tables.</p>
+                            <div class="project-tech-list">
+                                <span class="project-tech-tag">PHP</span>
+                                <span class="project-tech-tag">MySQL</span>
+                                <span class="project-tech-tag">HTML</span>
+                                <span class="project-tech-tag">CSS</span>
+                            </div>
+                        </div>
+                        <div class="project-card-footer">
+                            <div class="project-lang">
+                                <span class="lang-color-dot" style="background-color: #4F5D95;"></span> PHP
+                            </div>
+                            <div class="project-stats">
+                                <span><i class="fa-regular fa-star"></i> 0</span>
+                                <span><i class="fa-solid fa-code-fork"></i> 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 9: Greenvolt -->
+                    <div class="glass project-card animate-on-scroll" data-category="web" id="card-greenvolt">
+                        <div class="project-card-header">
+                            <div class="project-icon"><i class="fa-solid fa-leaf"></i></div>
+                            <div class="project-links">
+                                <a href="https://github.com/Shashank1197/Greenvolt" target="_blank" aria-label="GitHub Repository"><i class="fa-brands fa-github"></i></a>
+                            </div>
+                        </div>
+                        <div class="project-card-body">
+                            <h3 class="project-title">Greenvolt (Acehack 4.0)</h3>
+                            <p class="project-desc">A green-energy platform detailing solar panel power output estimates and visual metrics tracking environmental energy savings.</p>
+                            <div class="project-tech-list">
+                                <span class="project-tech-tag">HTML5</span>
+                                <span class="project-tech-tag">CSS3</span>
+                                <span class="project-tech-tag">JavaScript</span>
+                                <span class="project-tech-tag">Charts.js</span>
+                            </div>
+                        </div>
+                        <div class="project-card-footer">
+                            <div class="project-lang">
+                                <span class="lang-color-dot" style="background-color: #e34c26;"></span> HTML
+                            </div>
+                            <div class="project-stats">
+                                <span><i class="fa-regular fa-star"></i> 0</span>
+                                <span><i class="fa-solid fa-code-fork"></i> 1</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive AI Terminal Section -->
+        <section id="terminal" class="terminal-section">
+            <div class="container">
+                <h2 class="section-title animate-on-scroll" id="terminal-heading">ShashankAI Terminal</h2>
+                <p class="section-subtitle animate-on-scroll" id="terminal-intro">An interactive developer terminal console. Ask questions or run commands directly.</p>
+                
+                <div class="terminal-container animate-on-scroll" id="ai-terminal-window">
+                    <div class="terminal-header">
+                        <div class="terminal-buttons">
+                            <div class="terminal-btn red"></div>
+                            <div class="terminal-btn yellow"></div>
+                            <div class="terminal-btn green"></div>
+                        </div>
+                        <div class="terminal-title">shashank_assistant@sbu-ranchi: ~</div>
+                        <div style="width: 50px;"></div> <!-- Spacer -->
+                    </div>
+                    <div class="terminal-body" id="terminal-output-body">
+                        <div class="terminal-line">
+                            <span class="terminal-output system">Initializing ShashankAI CLI v1.0.2... Done.</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-output">Welcome to the portfolio CLI of Shashank Kumar.</span>
+                        </div>
+                        <div class="terminal-line">
+                            <span class="terminal-output">Type <span style="color:#00f2fe; font-weight:bold;">help</span> to see the list of available commands.</span>
+                        </div>
+                        <!-- CLI Lines will be appended here -->
+                        <div class="terminal-line terminal-input-line" id="prompt-line">
+                            <span class="terminal-prompt">guest@shashank-sbu:~$</span>
+                            <input type="text" class="terminal-input" id="terminal-cmd-input" autofocus autocomplete="off" spellcheck="false" aria-label="Terminal Input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact">
+            <div class="container contact-grid">
+                <div class="glass contact-card-sidebar animate-on-scroll" id="contact-details-card">
+                    <div>
+                        <h3>Get In Touch</h3>
+                        <p>Have an interesting project, internship, or query? Fill out the form or drop me a line through my social links.</p>
+                    </div>
+
+                    <div class="contact-info-list" id="contact-info-list">
+                        <div class="contact-info-item" id="info-location">
+                            <div class="icon"><i class="fa-solid fa-location-dot"></i></div>
+                            <div>
+                                <h4>Location</h4>
+                                <p>Jharkhand, India (Hometown Dhanbad)</p>
+                            </div>
+                        </div>
+                        <div class="contact-info-item" id="info-edu">
+                            <div class="icon"><i class="fa-solid fa-university"></i></div>
+                            <div>
+                                <h4>Education</h4>
+                                <p>Sarala Birla University, Ranchi (2022-2026 Batch)</p>
+                            </div>
+                        </div>
+                        <div class="contact-info-item" id="info-email">
+                            <div class="icon"><i class="fa-solid fa-envelope"></i></div>
+                            <div>
+                                <h4>Email</h4>
+                                <p><a href="mailto:shashankkumar1197@gmail.com" style="color:inherit; text-decoration:none;">shashankkumar1197@gmail.com</a></p>
+                            </div>
+                        </div>
+                        <div class="contact-info-item" id="info-phone">
+                            <div class="icon"><i class="fa-solid fa-phone"></i></div>
+                            <div>
+                                <h4>Phone</h4>
+                                <p><a href="tel:6202556466" style="color:inherit; text-decoration:none;">+91 6202556466</a></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact-social-icons" id="contact-socials">
+                        <a href="https://github.com/Shashank1197" target="_blank" class="social-circle" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+                        <a href="https://www.linkedin.com/in/shashank-kumar-07b4aa256/" target="_blank" class="social-circle" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+                        <a href="https://www.instagram.com/shashank_kumar_97/" target="_blank" class="social-circle" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    </div>
+                </div>
+
+                <div class="glass contact-form-container animate-on-scroll" id="contact-form-card">
+                    <h3>Send a Message</h3>
+                    <form id="portfolio-contact-form">
+                        <div class="form-group">
+                            <label for="contact-name">Your Name</label>
+                            <input type="text" id="contact-name" class="form-control" placeholder="John Doe" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-email">Email Address</label>
+                            <input type="email" id="contact-email" class="form-control" placeholder="john@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="contact-message">Message</label>
+                            <textarea id="contact-message" class="form-control" placeholder="Tell me about your project or opportunity..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="border:none; width: 100%; justify-content: center;" id="form-submit-btn">
+                            Send Message <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-content">
+            <a href="#" class="footer-logo" id="footer-logo">
+                <span>Shashank Kumar</span>
+            </a>
+            <p class="footer-text" id="footer-copyright">&copy; 2026 Shashank Kumar. All rights reserved. Built with HSL variables & Glassmorphism.</p>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast-notification">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toast-message">Message sent successfully!</span>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script src="script.js"></script>
+</body>
+</html>
