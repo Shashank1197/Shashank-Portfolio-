@@ -13,99 +13,187 @@ document.addEventListener("DOMContentLoaded", () => {
    1. Optimized Canvas Particles Background
    ========================================================================= */
 function initCanvasParticles() {
+    const container = document.getElementById("canvas-container");
     const canvas = document.getElementById("particle-canvas");
-    if (!canvas) return;
+    if (!container || !canvas) return;
 
-    const ctx = canvas.getContext("2d");
-    let particles = [];
-    let animationFrameId;
+    // Create Scene, Camera, and WebGL Renderer
+    const scene = new THREE.Scene();
+    
+    // Set up camera with dynamic aspect ratio
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 80;
 
-    // Colors matching CSS theme (cyan and purple accents)
-    const particleColors = [
-        "rgba(0, 242, 254, 0.25)",  // Cyan
-        "rgba(155, 81, 224, 0.2)",   // Purple
-        "rgba(255, 255, 255, 0.08)"  // Soft white
+    // Set up Renderer with antialiasing and alpha (transparent bg)
+    const renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance"
+    });
+    
+    // Handle 4K/high-res screens perfectly using devicePixelRatio
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Cap at 2 for performance, but extremely crisp
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    // Generate random particles
+    const particleCount = 450;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    const colors = new Float32Array(particleCount * 3);
+
+    // Palette (Red: #ff003c, Crimson: #8b0000, Soft gray)
+    const colorChoices = [
+        new THREE.Color(0xff003c), // Glowing Red
+        new THREE.Color(0x8b0000), // Crimson Red
+        new THREE.Color(0x555555)  // Soft gray
     ];
 
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+    for (let i = 0; i < particleCount; i++) {
+        // Distribute particles in a spherical layout
+        const r = 50 + Math.random() * 30;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos((Math.random() * 2) - 1);
+
+        positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+        positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+        positions[i * 3 + 2] = r * Math.cos(phi);
+
+        // Assign colors randomly from the choices
+        const color = colorChoices[Math.floor(Math.random() * colorChoices.length)];
+        colors[i * 3] = color.r;
+        colors[i * 3 + 1] = color.g;
+        colors[i * 3 + 2] = color.b;
     }
 
-    class Particle {
-        constructor() {
-            this.reset();
-        }
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-        reset() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.size = Math.random() * 3 + 1;
-            this.speedX = Math.random() * 0.4 - 0.2;
-            this.speedY = Math.random() * 0.4 - 0.2;
-            this.color = particleColors[Math.floor(Math.random() * particleColors.length)];
-        }
+    // Material with round soft particles
+    // Create a 2D canvas texture for a round dot to avoid pixelated squares
+    const createCircleTexture = () => {
+        const matCanvas = document.createElement('canvas');
+        matCanvas.width = 16;
+        matCanvas.height = 16;
+        const matCtx = matCanvas.getContext('2d');
+        const gradient = matCtx.createRadialGradient(8, 8, 0, 8, 8, 8);
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+        gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        matCtx.fillStyle = gradient;
+        matCtx.fillRect(0, 0, 16, 16);
+        return new THREE.CanvasTexture(matCanvas);
+    };
 
-        update() {
-            this.x += this.speedX;
-            this.y += this.speedY;
-
-            // Bounce off boundaries or wrap around
-            if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-            if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-        }
-
-        draw() {
-            ctx.fillStyle = this.color;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-        }
-    }
-
-    function setupParticles() {
-        particles = [];
-        // Scale particle count with screen size
-        const count = Math.min(Math.floor((canvas.width * canvas.height) / 15000), 80);
-        for (let i = 0; i < count; i++) {
-            particles.push(new Particle());
-        }
-    }
-
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        particles.forEach(p => {
-            p.update();
-            p.draw();
-        });
-
-        // Add soft connections between close particles
-        for (let a = 0; a < particles.length; a++) {
-            for (let b = a + 1; b < particles.length; b++) {
-                const dist = Math.hypot(particles[a].x - particles[b].x, particles[a].y - particles[b].y);
-                if (dist < 120) {
-                    ctx.strokeStyle = `rgba(0, 242, 254, ${0.12 * (1 - dist / 120)})`;
-                    ctx.lineWidth = 0.5;
-                    ctx.beginPath();
-                    ctx.moveTo(particles[a].x, particles[a].y);
-                    ctx.lineTo(particles[b].x, particles[b].y);
-                    ctx.stroke();
-                }
-            }
-        }
-
-        animationFrameId = requestAnimationFrame(animate);
-    }
-
-    window.addEventListener("resize", () => {
-        resizeCanvas();
-        setupParticles();
+    const material = new THREE.PointsMaterial({
+        size: 0.8,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.8,
+        map: createCircleTexture(),
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
     });
 
-    // Run setup
-    resizeCanvas();
-    setupParticles();
+    const pointCloud = new THREE.Points(geometry, material);
+    scene.add(pointCloud);
+
+    // Create line connection topology (connect points within a threshold)
+    const lineMaterial = new THREE.LineBasicMaterial({
+        color: 0xff003c,
+        transparent: true,
+        opacity: 0.08,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+    });
+
+    // Create connections statically
+    const lineIndices = [];
+    for (let i = 0; i < particleCount; i++) {
+        let connections = 0;
+        for (let j = i + 1; j < particleCount && connections < 2; j++) {
+            const dx = positions[i * 3] - positions[j * 3];
+            const dy = positions[i * 3 + 1] - positions[j * 3 + 1];
+            const dz = positions[i * 3 + 2] - positions[j * 3 + 2];
+            const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            
+            // Connect close nodes
+            if (dist < 28) {
+                lineIndices.push(i, j);
+                connections++;
+            }
+        }
+    }
+
+    const lineGeometry = new THREE.BufferGeometry();
+    lineGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    lineGeometry.setIndex(lineIndices);
+
+    const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
+    scene.add(lines);
+
+    // Mouse movement variables for parallax & interactive gravity
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetX = 0;
+    let targetY = 0;
+
+    window.addEventListener('mousemove', (e) => {
+        // Normalize mouse coordinates to [-1, 1]
+        mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+        mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    // Scroll parallax zoom/rotate
+    let scrollProgress = 0;
+    window.addEventListener('scroll', () => {
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        if (maxScroll > 0) {
+            scrollProgress = window.scrollY / maxScroll;
+        }
+    });
+
+    // Handle Window Resize
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Animation Loop
+    const clock = new THREE.Clock();
+
+    function animate() {
+        requestAnimationFrame(animate);
+
+        const elapsedTime = clock.getElapsedTime();
+
+        // Slow auto-rotation (live animation)
+        pointCloud.rotation.y = elapsedTime * 0.05;
+        pointCloud.rotation.x = elapsedTime * 0.02;
+        lines.rotation.y = elapsedTime * 0.05;
+        lines.rotation.x = elapsedTime * 0.02;
+
+        // Smoothly interpolate mouse target coordinates for interactive parallax drag
+        targetX += (mouseX - targetX) * 0.05;
+        targetY += (mouseY - targetY) * 0.05;
+
+        // Apply mouse interaction offset to rotation
+        pointCloud.rotation.y += targetX * 0.25;
+        pointCloud.rotation.x -= targetY * 0.25;
+        lines.rotation.y += targetX * 0.25;
+        lines.rotation.x -= targetY * 0.25;
+
+        // Parallax depth movement
+        camera.position.x = targetX * 15;
+        camera.position.y = targetY * 15;
+        
+        // Scroll interaction - pull camera back or push forward dynamically
+        camera.position.z = 80 + scrollProgress * 40;
+        camera.lookAt(scene.position);
+
+        renderer.render(scene, camera);
+    }
+
     animate();
 }
 
@@ -207,15 +295,56 @@ function initAITerminal() {
     // Terminal command definitions
     const commands = {
         help: () => `Available commands:
-  about    - Details about Shashank's academic journey
-  skills   - Lists developer stack & languages
-  projects - Displays highlights from my 20 repositories
-  hometown - Information on Dhanbad, Jharkhand
-  sbu      - About Sarala Birla University, Ranchi
-  contact  - Info on how to connect directly
-  socials  - Quick links to GitHub/LinkedIn profiles
-  hack     - Execute mock kernel override bypass
-  clear    - Flush terminal output buffer`,
+  about          - Details about Shashank's academic journey
+  skills         - Lists developer stack & languages
+  experience     - Internship & professional work history
+  certifications - Professional credentials & certs
+  awards         - TCS iON NQT test scores & accolades
+  projects       - Displays highlights from my GitHub repositories
+  hometown       - Information on Dhanbad, Jharkhand
+  sbu            - About Sarala Birla University, Ranchi
+  contact        - Info on how to connect directly
+  socials        - Quick links to GitHub/LinkedIn profiles
+  hack           - Execute mock kernel override bypass
+  clear          - Flush terminal output buffer`,
+
+        experience: () => `WORK HISTORY & INTERNSHIPS:
+---------------------------
+1. Summer Research Intern (June 2025 - July 2025)
+   BIT Sindri (Sindri, India) - On-site
+   Role: Designed core algorithms, optimized structural data flows in C/C++, Java, and Python.
+   
+2. Full Stack Web Developer Intern (March 2024 - May 2024)
+   Solar Secure IT Solutions - Remote
+   Role: Built frontend and backend components with PHP, MySQL, CSS, and JS across full request cycle.`,
+
+        certifications: () => `LICENSES & CERTIFICATIONS:
+---------------------------
+- Oracle Agentic AI Certified Foundations Associate (Aug 2026)
+  Cred ID: 103505350AAI26OFA (LangChain, AI Agents, OCI)
+- HackerRank SQL Basic Certificate (Aug 2026)
+  Cred ID: 88CA9D53BAC9
+- HackerRank Software Engineer Intern (Jul 2026)
+  Cred ID: 3COB9A0A232F
+- Simplilearn Databricks SQL Analytics & BI (Jan 2026)
+  Cred ID: 9714749
+- Career Essentials in Generative AI - Microsoft & LinkedIn (Nov 2025)
+- GUVI / IIT Madras Research Park Python Programming (Jul 2023)
+  Cred ID: 61654bHAF8255R19D6
+- AWS Solutions Architecture Job Simulation (2023)
+- Goldman Sachs Software Engineering Job Simulation (2023)
+- The Achievement C Programming Course (Grade B+, Jan 2023)`,
+
+        certs: () => commands.certifications(),
+
+        awards: () => `HONORS, AWARDS & TEST SCORES:
+------------------------------
+- Code N Clone Winner (Code Byte, Aug 2024)
+  1st place winner at Sarala Birla University. Designed and debugged SBU site clone.
+  
+- TCS iON NQT IT Score (June 2026)
+  Cognitive: 80.51% | Programming: 68.17% | Quantitative: 64.84%
+  Total NQT Score: 80.51% (Verified Certificate)`,
         
         about: () => `Shashank Kumar
 --------------
@@ -232,13 +361,17 @@ Main focuses: offline AI systems, speech APIs, scraping automation.`,
         
         projects: () => `HIGHLIGHT PROJECTS:
 -------------------
-1. AI Meeting Assistant   - Whisper transcribing, summarizer, & RAG API.
-2. Face-Recognition Log   - Deep learning computer vision log panel.
-3. B2B Outreach Engine    - Web crawler & cold-email automation scheduler.
-4. Offline Assistant      - Local Voice agent powered by Ollama models.
-5. eVcharge Station Find  - Mapping portal with slot booking mockups.
-6. Hand Gesture Control   - MediaPipe gesture interfaces for desktop controls.
-7. Virtual Police Portal  - Citizen FIR log EJS/Node.js web application.`,
+1. Recipe Finder [Live]    - Low-RAM recipe pairing engine (FastAPI).
+2. Cyber Arena [Live]     - Cybersecurity simulation arena (Python/JS).
+3. AI Meeting Assistant   - Whisper transcribing, summarizer, & RAG API.
+4. Face-Recognition Log   - Deep learning computer vision log panel.
+5. B2B Outreach Engine    - Web crawler & cold-email automation scheduler.
+6. Offline Assistant      - Local Voice agent powered by Ollama models.
+7. eVcharge Station Find  - Mapping portal with slot booking mockups.
+8. Hand Gesture Control   - MediaPipe gesture interfaces for desktop controls.
+9. Virtual Police Portal  - Citizen FIR log EJS/Node.js web application.
+10. Collector Hub         - TypeScript data streams dashboard panel.
+11. Automated Cleaner     - Data parsing utility for financial ledgers.`,
 
         hometown: () => `Hometown: Dhanbad, Jharkhand
 ---------------------------
@@ -342,14 +475,14 @@ Instagram : https://www.instagram.com/shashank_kumar_97/`,
 
 function executeHackSimulation(termBody, promptLine) {
     const hackSteps = [
-        { text: "Bypassing Sarala Birla University server firewall...", color: "#ffbd2e" },
-        { text: "Establishing secure proxy node redirect tunnels...", color: "#ffbd2e" },
-        { text: "Tunnel: Ranchi -> Dhanbad -> localhost:3306", color: "#00f2fe" },
-        { text: "Intercepting database credentials for user 'admin'...", color: "#00f2fe" },
-        { text: "Cracking cryptographic salt using locally deployed LLM agent...", color: "#9b51e0" },
-        { text: "Decoding SHA-256 secure hashes: [||||||||||||||||||||] 100%", color: "#27c93f" },
-        { text: "DECRYPTION SUCCESSFUL. Access token: SBU_CSE_2024_SHASHANK", color: "#27c93f" },
-        { text: "ROOT ACCESS GRANTED. Welcome, Shashank Kumar.", color: "#27c93f" }
+        { text: "Bypassing Sarala Birla University server firewall...", color: "#ff4d4d" },
+        { text: "Establishing secure proxy node redirect tunnels...", color: "#ff4d4d" },
+        { text: "Tunnel: Ranchi -> Dhanbad -> localhost:3306", color: "#ff003c" },
+        { text: "Intercepting database credentials for user 'admin'...", color: "#ff003c" },
+        { text: "Cracking cryptographic salt using locally deployed LLM agent...", color: "#8b0000" },
+        { text: "Decoding SHA-256 secure hashes: [||||||||||||||||||||] 100%", color: "#ff003c" },
+        { text: "DECRYPTION SUCCESSFUL. Access token: SBU_CSE_2024_SHASHANK", color: "#ff003c" },
+        { text: "ROOT ACCESS GRANTED. Welcome, Shashank Kumar.", color: "#ff003c" }
     ];
 
     let delay = 0;
