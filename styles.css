@@ -79,13 +79,24 @@ body {
 }
 
 /* Background Canvas & Effects */
-#canvas-container {
+#hero-3d-container {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     z-index: -2;
+    pointer-events: none;
+    overflow: hidden;
+    opacity: 0.55; /* Reduced opacity for subtle background integration */
+}
+
+#hero-3d-container canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
     pointer-events: none;
 }
 
@@ -299,6 +310,8 @@ header.scrolled {
     grid-template-columns: 1.2fr 0.8fr;
     gap: 4rem;
     align-items: center;
+    position: relative;
+    z-index: 2;
 }
 
 .hero-tagline {
@@ -1571,4 +1584,56 @@ footer {
     .radial-gauge-container {
         margin-right: 0;
     }
+}
+
+/* Futuristic 3D Section Transitions */
+main {
+    position: relative;
+    perspective: 2000px; /* Enhanced depth perspective */
+    perspective-origin: 50% 35%;
+    min-height: 100vh;
+    width: 100%;
+}
+
+section {
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), 
+                opacity 0.4s ease-out, 
+                filter 0.4s ease-out;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+}
+
+section.sec-hidden {
+    display: none !important;
+}
+
+section.sec-entering {
+    display: block !important;
+    opacity: 0;
+    filter: blur(8px);
+    /* High-impact 3D realistic emergence from clicked tab */
+    transform: translate3d(var(--emerge-x, 0px), var(--emerge-y, 0px), -800px) scale(0.02) rotateX(35deg) rotateY(-25deg) rotateZ(5deg);
+    transform-origin: var(--orig-x, 50%) var(--orig-y, 50%);
+    pointer-events: none;
+}
+
+section.sec-active {
+    display: block !important;
+    opacity: 1;
+    filter: blur(0px);
+    transform: translate3d(0, 0, 0) scale(1) rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+    pointer-events: auto;
+}
+
+section.sec-leaving {
+    display: block !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    filter: blur(8px);
+    /* Dynamic push away to the background depth */
+    transform: translate3d(0, -60px, -400px) scale(0.85) rotateX(-20deg) rotateY(15deg);
+    pointer-events: none;
 }

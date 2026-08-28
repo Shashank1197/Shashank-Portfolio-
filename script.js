@@ -1,6 +1,7 @@
 // Wait for DOM to load
 document.addEventListener("DOMContentLoaded", () => {
-    initCanvasParticles();
+    initHero3DBackground();
+    init3DNavigation();
     initHeaderScroll();
     initProjectFilters();
     initAITerminal();
@@ -10,67 +11,73 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* =========================================================================
-   1. Optimized Canvas Particles Background
+   1. Optimized Canvas Hero 3D Background
    ========================================================================= */
-function initCanvasParticles() {
-    const container = document.getElementById("canvas-container");
-    const canvas = document.getElementById("particle-canvas");
-    if (!container || !canvas) return;
+function initHero3DBackground() {
+    const container = document.getElementById("hero-3d-container");
+    if (!container) return;
 
     // Create Scene, Camera, and WebGL Renderer
     const scene = new THREE.Scene();
     
-    // Set up camera with dynamic aspect ratio
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 80;
+    const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.z = 25;
 
-    // Set up Renderer with antialiasing and alpha (transparent bg)
     const renderer = new THREE.WebGLRenderer({
-        canvas: canvas,
         antialias: true,
         alpha: true,
         powerPreference: "high-performance"
     });
-    
-    // Handle 4K/high-res screens perfectly using devicePixelRatio
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Cap at 2 for performance, but extremely crisp
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    container.appendChild(renderer.domElement);
 
-    // Generate random particles
-    const particleCount = 450;
-    const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(particleCount * 3);
-    const colors = new Float32Array(particleCount * 3);
+    // Add Lights for beautiful metallic highlights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
 
-    // Palette (Red: #ff003c, Crimson: #8b0000, Soft gray)
-    const colorChoices = [
+    // Glowing colorful point lights matching the crimson/purple theme
+    const redLight = new THREE.PointLight(0xff003c, 3, 100);
+    redLight.position.set(10, 10, 10);
+    scene.add(redLight);
+
+    const purpleLight = new THREE.PointLight(0x8b5cf6, 3, 100);
+    purpleLight.position.set(-10, -10, 10);
+    scene.add(purpleLight);
+
+    const whiteLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    whiteLight.position.set(0, 20, 10);
+    scene.add(whiteLight);
+
+    // 1. Particle System Setup
+    const particleCount = 150;
+    const particleGeometry = new THREE.BufferGeometry();
+    const particlePositions = new Float32Array(particleCount * 3);
+    const particleColors = new Float32Array(particleCount * 3);
+
+    // Colors matching theme
+    const themeColors = [
         new THREE.Color(0xff003c), // Glowing Red
-        new THREE.Color(0x8b0000), // Crimson Red
-        new THREE.Color(0x555555)  // Soft gray
+        new THREE.Color(0x8b5cf6), // Violet/Purple
+        new THREE.Color(0xffffff)  // White
     ];
 
     for (let i = 0; i < particleCount; i++) {
-        // Distribute particles in a spherical layout
-        const r = 50 + Math.random() * 30;
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos((Math.random() * 2) - 1);
+        // Distribute particles in a 3D box region
+        particlePositions[i * 3] = (Math.random() - 0.5) * 60;
+        particlePositions[i * 3 + 1] = (Math.random() - 0.5) * 40;
+        particlePositions[i * 3 + 2] = (Math.random() - 0.5) * 40;
 
-        positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-        positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-        positions[i * 3 + 2] = r * Math.cos(phi);
-
-        // Assign colors randomly from the choices
-        const color = colorChoices[Math.floor(Math.random() * colorChoices.length)];
-        colors[i * 3] = color.r;
-        colors[i * 3 + 1] = color.g;
-        colors[i * 3 + 2] = color.b;
+        const col = themeColors[Math.floor(Math.random() * themeColors.length)];
+        particleColors[i * 3] = col.r;
+        particleColors[i * 3 + 1] = col.g;
+        particleColors[i * 3 + 2] = col.b;
     }
 
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+    particleGeometry.setAttribute('color', new THREE.BufferAttribute(particleColors, 3));
 
-    // Material with round soft particles
-    // Create a 2D canvas texture for a round dot to avoid pixelated squares
+    // Particle Texture (Circle)
     const createCircleTexture = () => {
         const matCanvas = document.createElement('canvas');
         matCanvas.width = 16;
@@ -84,111 +91,135 @@ function initCanvasParticles() {
         return new THREE.CanvasTexture(matCanvas);
     };
 
-    const material = new THREE.PointsMaterial({
-        size: 0.8,
+    const particleMaterial = new THREE.PointsMaterial({
+        size: 0.35,
         vertexColors: true,
         transparent: true,
-        opacity: 0.8,
+        opacity: 0.6,
         map: createCircleTexture(),
         blending: THREE.AdditiveBlending,
         depthWrite: false
     });
 
-    const pointCloud = new THREE.Points(geometry, material);
-    scene.add(pointCloud);
+    const particles = new THREE.Points(particleGeometry, particleMaterial);
+    scene.add(particles);
 
-    // Create line connection topology (connect points within a threshold)
-    const lineMaterial = new THREE.LineBasicMaterial({
-        color: 0xff003c,
-        transparent: true,
-        opacity: 0.08,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false
-    });
+    // 2. Floating Colorful Geometric Shapes
+    const shapes = [];
+    const geometries = [
+        new THREE.BoxGeometry(1.2, 1.2, 1.2),
+        new THREE.TorusGeometry(0.8, 0.25, 16, 100),
+        new THREE.IcosahedronGeometry(0.9),
+        new THREE.ConeGeometry(0.7, 1.5, 32),
+        new THREE.OctahedronGeometry(0.9)
+    ];
 
-    // Create connections statically
-    const lineIndices = [];
-    for (let i = 0; i < particleCount; i++) {
-        let connections = 0;
-        for (let j = i + 1; j < particleCount && connections < 2; j++) {
-            const dx = positions[i * 3] - positions[j * 3];
-            const dy = positions[i * 3 + 1] - positions[j * 3 + 1];
-            const dz = positions[i * 3 + 2] - positions[j * 3 + 2];
-            const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            
-            // Connect close nodes
-            if (dist < 28) {
-                lineIndices.push(i, j);
-                connections++;
-            }
-        }
+    const materials = [
+        new THREE.MeshStandardMaterial({ color: 0xff003c, roughness: 0.1, metalness: 0.8 }), // Neon Red
+        new THREE.MeshStandardMaterial({ color: 0x8b0000, roughness: 0.2, metalness: 0.7 }), // Crimson
+        new THREE.MeshStandardMaterial({ color: 0x8b5cf6, roughness: 0.15, metalness: 0.8 }), // Violet
+        new THREE.MeshStandardMaterial({ color: 0x06b6d4, roughness: 0.1, metalness: 0.9 })  // Cyan
+    ];
+
+    const shapeCount = 10;
+    for (let i = 0; i < shapeCount; i++) {
+        const geom = geometries[Math.floor(Math.random() * geometries.length)];
+        const mat = materials[Math.floor(Math.random() * materials.length)].clone();
+        
+        // Randomly modify materials slightly for uniqueness
+        mat.color.addScalar((Math.random() - 0.5) * 0.1);
+        
+        const mesh = new THREE.Mesh(geom, mat);
+        
+        // Setup initial orbit and self rotation parameters
+        const orbitRadius = 8 + Math.random() * 12;
+        const orbitSpeed = (0.05 + Math.random() * 0.08) * (Math.random() > 0.5 ? 1 : -1);
+        const orbitPhase = Math.random() * Math.PI * 2;
+        const orbitYScale = 0.3 + Math.random() * 0.4; // elliptical ratio for height offset
+        const yOffset = (Math.random() - 0.5) * 10;
+
+        mesh.position.set(
+            Math.cos(orbitPhase) * orbitRadius,
+            Math.sin(orbitPhase) * orbitRadius * orbitYScale + yOffset,
+            (Math.random() - 0.5) * 10
+        );
+
+        // Self rotation speed
+        const rotSpeedX = (Math.random() - 0.5) * 0.02;
+        const rotSpeedY = (Math.random() - 0.5) * 0.02;
+        const rotSpeedZ = (Math.random() - 0.5) * 0.02;
+
+        scene.add(mesh);
+        shapes.push({
+            mesh,
+            orbitRadius,
+            orbitSpeed,
+            orbitPhase,
+            orbitYScale,
+            yOffset,
+            rotSpeedX,
+            rotSpeedY,
+            rotSpeedZ
+        });
     }
 
-    const lineGeometry = new THREE.BufferGeometry();
-    lineGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    lineGeometry.setIndex(lineIndices);
-
-    const lines = new THREE.LineSegments(lineGeometry, lineMaterial);
-    scene.add(lines);
-
-    // Mouse movement variables for parallax & interactive gravity
+    // Mouse Interaction
     let mouseX = 0;
     let mouseY = 0;
     let targetX = 0;
     let targetY = 0;
 
     window.addEventListener('mousemove', (e) => {
-        // Normalize mouse coordinates to [-1, 1]
+        // Center-relative normalized coordinates [-1, 1]
         mouseX = (e.clientX / window.innerWidth) * 2 - 1;
         mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
     });
 
-    // Scroll parallax zoom/rotate
-    let scrollProgress = 0;
-    window.addEventListener('scroll', () => {
-        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        if (maxScroll > 0) {
-            scrollProgress = window.scrollY / maxScroll;
-        }
-    });
-
-    // Handle Window Resize
+    // Resize Handler
     window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        camera.aspect = width / height;
         camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setSize(width, height);
     });
 
-    // Animation Loop
+    // Animation Loop with Clock
     const clock = new THREE.Clock();
+    let isVisible = true;
+    document.addEventListener("visibilitychange", () => {
+        isVisible = !document.hidden;
+    });
 
     function animate() {
         requestAnimationFrame(animate);
+        if (!isVisible) return;
 
-        const elapsedTime = clock.getElapsedTime();
+        const delta = clock.getDelta();
+        const elapsed = clock.getElapsedTime();
 
-        // Slow auto-rotation (live animation)
-        pointCloud.rotation.y = elapsedTime * 0.05;
-        pointCloud.rotation.x = elapsedTime * 0.02;
-        lines.rotation.y = elapsedTime * 0.05;
-        lines.rotation.x = elapsedTime * 0.02;
+        // 1. Slow orbit and rotation for geometric shapes
+        shapes.forEach((item) => {
+            const currentPhase = item.orbitPhase + elapsed * item.orbitSpeed;
+            item.mesh.position.x = Math.cos(currentPhase) * item.orbitRadius;
+            item.mesh.position.y = Math.sin(currentPhase) * item.orbitRadius * item.orbitYScale + item.yOffset;
+            
+            item.mesh.rotation.x += item.rotSpeedX;
+            item.mesh.rotation.y += item.rotSpeedY;
+            item.mesh.rotation.z += item.rotSpeedZ;
+        });
 
-        // Smoothly interpolate mouse target coordinates for interactive parallax drag
+        // 2. Slow particle system rotation
+        particles.rotation.y = elapsed * 0.03;
+        particles.rotation.x = elapsed * 0.01;
+
+        // 3. Smooth mouse parallax
         targetX += (mouseX - targetX) * 0.05;
         targetY += (mouseY - targetY) * 0.05;
 
-        // Apply mouse interaction offset to rotation
-        pointCloud.rotation.y += targetX * 0.25;
-        pointCloud.rotation.x -= targetY * 0.25;
-        lines.rotation.y += targetX * 0.25;
-        lines.rotation.x -= targetY * 0.25;
-
-        // Parallax depth movement
-        camera.position.x = targetX * 15;
-        camera.position.y = targetY * 15;
-        
-        // Scroll interaction - pull camera back or push forward dynamically
-        camera.position.z = 80 + scrollProgress * 40;
+        // Shift camera slightly based on mouse
+        camera.position.x = targetX * 6;
+        camera.position.y = targetY * 4;
         camera.lookAt(scene.position);
 
         renderer.render(scene, camera);
@@ -202,33 +233,12 @@ function initCanvasParticles() {
    ========================================================================= */
 function initHeaderScroll() {
     const header = document.getElementById("main-header");
-    const navLinks = document.querySelectorAll(".nav-links a");
-    const sections = document.querySelectorAll("section");
 
     window.addEventListener("scroll", () => {
         if (window.scrollY > 50) {
             header.classList.add("scrolled");
         } else {
             header.classList.remove("scrolled");
-        }
-
-        // Active link on scroll high-lighting
-        let currentSectionId = "";
-        sections.forEach(sec => {
-            const top = sec.offsetTop - 120;
-            const height = sec.offsetHeight;
-            if (window.scrollY >= top && window.scrollY < top + height) {
-                currentSectionId = sec.getAttribute("id");
-            }
-        });
-
-        if (currentSectionId) {
-            navLinks.forEach(link => {
-                link.classList.remove("active");
-                if (link.getAttribute("href") === `#${currentSectionId}`) {
-                    link.classList.add("active");
-                }
-            });
         }
     });
 }
@@ -656,4 +666,141 @@ function initMobileMenu() {
             }
         });
     });
+}
+
+/* =========================================================================
+   8. Futuristic 3D Section Transitions
+   ========================================================================= */
+function init3DNavigation() {
+    const sections = document.querySelectorAll("main > section");
+    if (!sections.length) return;
+
+    // Track the currently active section ID
+    let activeSectionId = "hero";
+
+    // Set up initial state: show only the active section
+    sections.forEach(sec => {
+        const id = sec.getAttribute("id");
+        if (id === activeSectionId) {
+            sec.classList.add("sec-active");
+            sec.classList.remove("sec-hidden", "sec-leaving", "sec-entering");
+        } else {
+            sec.classList.add("sec-hidden");
+            sec.classList.remove("sec-active", "sec-leaving", "sec-entering");
+        }
+    });
+
+    // Main function to navigate with 3D emergence transition
+    function navigateToSection(targetId, clickedElement = null) {
+        if (targetId === activeSectionId) return;
+
+        const currentSec = document.getElementById(activeSectionId);
+        const targetSec = document.getElementById(targetId);
+        if (!targetSec) return;
+
+        // Default origins
+        let origX = "50%";
+        let origY = "30%";
+        let emergeX = "0px";
+        let emergeY = "100px";
+
+        // Calculate clicked origin coordinates if clickedElement is provided
+        if (clickedElement) {
+            const rect = clickedElement.getBoundingClientRect();
+            const clickX = rect.left + rect.width / 2;
+            const clickY = rect.top + rect.height / 2;
+
+            origX = `${clickX}px`;
+            origY = `${clickY}px`;
+            emergeX = `${clickX - window.innerWidth / 2}px`;
+            emergeY = `${clickY - window.innerHeight / 2}px`;
+        }
+
+        // Apply custom property coordinates to target section
+        targetSec.style.setProperty("--orig-x", origX);
+        targetSec.style.setProperty("--orig-y", origY);
+        targetSec.style.setProperty("--emerge-x", emergeX);
+        targetSec.style.setProperty("--emerge-y", emergeY);
+
+        // Phase 1: Current section leaves
+        if (currentSec) {
+            currentSec.classList.remove("sec-active");
+            currentSec.classList.add("sec-leaving");
+            currentSec.offsetHeight; // force layout reflow
+        }
+
+        // Phase 2: Target section enters
+        targetSec.classList.remove("sec-hidden");
+        targetSec.classList.add("sec-entering");
+        targetSec.offsetHeight; // force layout reflow
+
+        // Scroll page to top instantly to align section properly
+        window.scrollTo({ top: 0, behavior: "instant" });
+
+        // Phase 3: Transition to active
+        setTimeout(() => {
+            if (currentSec) {
+                currentSec.classList.remove("sec-leaving");
+                currentSec.classList.add("sec-hidden");
+            }
+
+            targetSec.classList.remove("sec-entering");
+            targetSec.classList.add("sec-active");
+
+            // Instantly trigger scroll-reveal animation for elements inside target section
+            const revealElements = targetSec.querySelectorAll(".animate-on-scroll");
+            revealElements.forEach(el => {
+                el.classList.add("animated");
+            });
+
+            // Update URL hash without jumping
+            if (history.pushState) {
+                history.pushState(null, null, `#${targetId}`);
+            } else {
+                window.location.hash = `#${targetId}`;
+            }
+
+            activeSectionId = targetId;
+
+            // Highlight the active menu link
+            updateNavHighlights(targetId);
+        }, 230);
+    }
+
+    function updateNavHighlights(targetId) {
+        const navLinks = document.querySelectorAll(".nav-links a");
+        navLinks.forEach(link => {
+            const href = link.getAttribute("href");
+            if (href === `#${targetId}`) {
+                link.classList.add("active");
+            } else {
+                link.classList.remove("active");
+            }
+        });
+    }
+
+    // Intercept all hash-based links clicks (menu, buttons, logo)
+    document.addEventListener("click", (e) => {
+        const link = e.target.closest("a");
+        if (!link) return;
+
+        const href = link.getAttribute("href");
+        if (href && (href.startsWith("#") || href === "")) {
+            e.preventDefault();
+            
+            // Extract destination section ID
+            let targetId = href.substring(1);
+            if (href === "#" || href === "") targetId = "hero";
+
+            navigateToSection(targetId, link);
+        }
+    });
+
+    // Direct routing if hash exists in URL on page load
+    if (window.location.hash) {
+        const initialId = window.location.hash.substring(1);
+        if (document.getElementById(initialId)) {
+            navigateToSection(initialId);
+        }
+    }
 }
