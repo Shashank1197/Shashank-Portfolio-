@@ -365,24 +365,25 @@ Main focuses: offline AI systems, speech APIs, scraping automation.`,
         
         skills: () => `SKILLS STACK SUMMARY
 ====================
-[Languages]      : Python, JavaScript, PHP, SQL
-[AI & Vision]    : OpenCV, MediaPipe, Whisper ASR, RAG, local LLMs (Ollama)
-[Web Backend]    : FastAPI, Node.js / Express, PHP
-[Tools & Dev]    : Git/GitHub, Docker, CI/CD, MySQL, MongoDB`,
+[Languages]      : Python, Java, JavaScript, TypeScript, PHP, SQL, C/C++
+[AI & Data]      : OpenCV, MediaPipe, Whisper ASR, RAG, Ollama, Pandas, Data Analytics
+[Web & QA]       : FastAPI, Node.js / Express, Selenium WebDriver, RestAssured, TestNG
+[Tools & Dev]    : Git/GitHub, Docker, CI/CD, MySQL, MongoDB, JDBC`,
         
-        projects: () => `HIGHLIGHT PROJECTS:
--------------------
-1. Recipe Finder [Live]    - Low-RAM recipe pairing engine (FastAPI).
-2. Cyber Arena [Live]     - Cybersecurity simulation arena (Python/JS).
-3. AI Meeting Assistant   - Whisper transcribing, summarizer, & RAG API.
-4. Face-Recognition Log   - Deep learning computer vision log panel.
-5. B2B Outreach Engine    - Web crawler & cold-email automation scheduler.
-6. Offline Assistant      - Local Voice agent powered by Ollama models.
-7. eVcharge Station Find  - Mapping portal with slot booking mockups.
-8. Hand Gesture Control   - MediaPipe gesture interfaces for desktop controls.
-9. Virtual Police Portal  - Citizen FIR log EJS/Node.js web application.
-10. Collector Hub         - TypeScript data streams dashboard panel.
-11. Automated Cleaner     - Data parsing utility for financial ledgers.`,
+        projects: () => `HIGHLIGHT PROJECTS (27 Repos on GitHub):
+----------------------------------------
+1. Recipe Finder [Live]        - Low-RAM recipe pairing engine (FastAPI/Vercel).
+2. Cyber Arena [Live]         - Interactive cybersecurity arena (Python/JS).
+3. Yuva AI Logistics Pipeline - ML route optimization & delay-driver analysis.
+4. Ecommerce Automation       - Java SDET framework (Selenium/RestAssured/TestNG).
+5. AI Meeting Assistant       - Whisper transcribing, summarizer & RAG API.
+6. Face-Recognition Log       - Contactless computer vision attendance system.
+7. Healthcare Data Analysis   - Clinical record correlation & risk modeling.
+8. B2B Outreach Engine        - Web crawler & cold-email automation scheduler.
+9. Offline Assistant          - Local voice agent powered by Ollama models.
+10. UIDAI Aadhaar Modeling    - Hackathon demographic & verification analytics.
+11. eVcharge Station Finder   - EV mapping & charging slot reservation portal.
+12. Vertex Connect            - Java multithreaded socket relay topology system.`,
 
         hometown: () => `Hometown: Dhanbad, Jharkhand
 ---------------------------
