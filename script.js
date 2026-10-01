@@ -8,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
     initContactForm();
     initScrollAnimations();
     initMobileMenu();
+    initStandingAvatar();
 });
 
 /* =========================================================================
@@ -802,5 +803,133 @@ function init3DNavigation() {
         if (document.getElementById(initialId)) {
             navigateToSection(initialId);
         }
+    }
+}
+
+/* =========================================================================
+   9. Interactive Standing Welcoming Avatar & Speech Controller
+   ========================================================================= */
+function initStandingAvatar() {
+    const bubble = document.getElementById("avatar-speech-bubble");
+    const bubbleText = document.getElementById("avatar-welcome-text");
+    const msgCounter = document.getElementById("avatar-msg-counter");
+    const speakBtn = document.getElementById("bubble-speak-btn");
+    const charWrapper = document.getElementById("avatar-character-wrapper");
+    const heroVisual = document.querySelector(".hero-visual");
+
+    if (!charWrapper || !bubbleText) return;
+
+    const messages = [
+        "Welcome to my portfolio! 👋 I'm delighted you stopped by. Feel free to explore my AI and web engineering projects!",
+        "Interested in AI? Check out my FastSAM segmentation models and local LLM agents in the Projects section! 🤖",
+        "Try out the AI Terminal below! Type 'help', 'skills', or test simulated real-time assistant responses! 💻",
+        "Currently available for full-time software engineering roles and high-impact internships! Let's connect! 🤝"
+    ];
+
+    let currentMsgIndex = 0;
+    let isTransitioning = false;
+
+    function showMessage(index) {
+        if (isTransitioning) return;
+        isTransitioning = true;
+        
+        currentMsgIndex = (index + messages.length) % messages.length;
+        
+        bubbleText.style.opacity = "0";
+        setTimeout(() => {
+            bubbleText.textContent = `"${messages[currentMsgIndex]}"`;
+            bubbleText.style.opacity = "1";
+            if (msgCounter) {
+                msgCounter.textContent = `${currentMsgIndex + 1}/${messages.length}`;
+            }
+            isTransitioning = false;
+        }, 200);
+    }
+
+    function triggerAvatarReaction() {
+        // Trigger wave animation on avatar
+        charWrapper.classList.remove("react-wave");
+        void charWrapper.offsetWidth; // Force reflow
+        charWrapper.classList.add("react-wave");
+        
+        // Advance to next greeting message
+        showMessage(currentMsgIndex + 1);
+    }
+
+    // Avatar click and keyboard access
+    charWrapper.addEventListener("click", triggerAvatarReaction);
+    charWrapper.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            triggerAvatarReaction();
+        }
+    });
+
+    // Speech bubble click to advance message (ignoring clicks directly on audio button)
+    if (bubble) {
+        bubble.addEventListener("click", (e) => {
+            if (e.target.closest("#bubble-speak-btn")) return;
+            triggerAvatarReaction();
+        });
+    }
+
+    // Web Speech API Voice synthesis
+    if (speakBtn && "speechSynthesis" in window) {
+        speakBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            
+            // If already speaking, cancel
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                speakBtn.classList.remove("speaking");
+                speakBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
+                return;
+            }
+
+            // Clean text for speech (strip emojis and outer quotes)
+            const cleanText = messages[currentMsgIndex].replace(/[\u{1F300}-\u{1F9FF}]/gu, "").replace(/"/g, "");
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.rate = 1.0;
+            utterance.pitch = 1.05;
+            
+            // Voice selection
+            const voices = window.speechSynthesis.getVoices();
+            const preferredVoice = voices.find(v => v.lang.startsWith("en") && (v.name.includes("Natural") || v.name.includes("Google") || v.name.includes("David") || v.name.includes("Guy")));
+            if (preferredVoice) utterance.voice = preferredVoice;
+
+            speakBtn.classList.add("speaking");
+            speakBtn.innerHTML = `<i class="fa-solid fa-volume-xmark"></i>`;
+
+            utterance.onend = () => {
+                speakBtn.classList.remove("speaking");
+                speakBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
+            };
+
+            utterance.onerror = () => {
+                speakBtn.classList.remove("speaking");
+                speakBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
+            };
+
+            window.speechSynthesis.speak(utterance);
+        });
+    } else if (speakBtn) {
+        speakBtn.style.display = "none";
+    }
+
+    // Dynamic 3D tilt tracking cursor on hero section
+    if (heroVisual && window.matchMedia("(hover: hover)").matches) {
+        heroVisual.addEventListener("mousemove", (e) => {
+            const rect = heroVisual.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width - 0.5;
+            const y = (e.clientY - rect.top) / rect.height - 0.5;
+            
+            const rotY = x * 12; // tilt horizontally
+            const rotX = -y * 8;  // tilt vertically
+            charWrapper.style.transform = `perspective(800px) rotateY(${rotY}deg) rotateX(${rotX}deg) translateY(-4px)`;
+        });
+
+        heroVisual.addEventListener("mouseleave", () => {
+            charWrapper.style.transform = "perspective(800px) rotateY(0deg) rotateX(0deg) translateY(0px)";
+        });
     }
 }

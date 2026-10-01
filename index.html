@@ -18,7 +18,7 @@
     <meta property="og:image" content="https://avatars.githubusercontent.com/u/170442157?v=4">
     
     <!-- CSS and Fonts -->
-    <link rel="stylesheet" href="styles.css?v=6">
+    <link rel="stylesheet" href="styles.css?v=7">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -81,28 +81,80 @@
                 </div>
 
                 <div class="hero-visual animate-on-scroll">
-                    <div class="glass avatar-card" id="profile-summary-card">
-                        <div class="avatar-wrapper">
-                            <div class="avatar-glow"></div>
-                            <img src="https://avatars.githubusercontent.com/u/170442157?v=4" alt="Shashank Kumar" class="avatar-image" id="profile-image">
-                        </div>
-                        <h3 id="profile-name">Shashank Kumar</h3>
-                        <p class="role" id="profile-role">@Shashank1197</p>
+                    <div class="standing-avatar-stage" id="standing-avatar-stage">
                         
-                        <div class="avatar-stats" id="profile-stats">
-                            <div class="stat-item" id="stat-repos">
-                                <span class="num">28</span>
-                                <span class="label">Repos</span>
+                        <!-- Interactive Welcoming Speech Bubble -->
+                        <div class="avatar-speech-bubble" id="avatar-speech-bubble" role="region" aria-label="Avatar Greeting">
+                            <div class="bubble-header">
+                                <span class="bubble-live-dot"></span>
+                                <span class="bubble-badge">Shashank's AI Avatar</span>
+                                <button class="bubble-speak-btn" id="bubble-speak-btn" title="Click to hear voice greeting" aria-label="Listen to greeting">
+                                    <i class="fa-solid fa-volume-high"></i>
+                                </button>
                             </div>
-                            <div class="stat-item" id="stat-followers">
-                                <span class="num">8</span>
-                                <span class="label">Followers</span>
+                            <p class="bubble-text" id="avatar-welcome-text">
+                                "Welcome to my portfolio! 👋 I'm delighted you stopped by. Feel free to explore my AI and web projects!"
+                            </p>
+                            <div class="bubble-footer">
+                                <span class="bubble-hint"><i class="fa-solid fa-hand-sparkles"></i> Click avatar to interact</span>
+                                <span class="bubble-counter" id="avatar-msg-counter">1/4</span>
                             </div>
-                            <div class="stat-item" id="stat-exp">
-                                <span class="num">3+</span>
-                                <span class="label">Years Code</span>
+                            <div class="bubble-tail"></div>
+                        </div>
+
+                        <!-- Floating Badges -->
+                        <div class="avatar-floating-badge badge-top-left" id="badge-role">
+                            <i class="fa-solid fa-code"></i> AI & Web Dev
+                        </div>
+                        <div class="avatar-floating-badge badge-top-right" id="badge-status">
+                            <span class="pulse-indicator"></span> Welcoming Visitors
+                        </div>
+
+                        <!-- Main Standing Character Container with Pedestal -->
+                        <div class="avatar-character-wrapper" id="avatar-character-wrapper" tabindex="0" role="button" aria-label="Interact with Shashank's avatar">
+                            <div class="avatar-aura-glow"></div>
+                            
+                            <!-- Responsive picture with WebP & PNG fallback -->
+                            <picture>
+                                <source srcset="assets/avatar-welcoming.webp" type="image/webp">
+                                <img src="assets/avatar-welcoming.png" alt="Shashank Kumar - Avatar standing in formals welcoming visitors" class="avatar-standing-image" id="avatar-standing-image" loading="eager">
+                            </picture>
+
+                            <!-- Futuristic Holographic Pedestal -->
+                            <div class="holographic-pedestal" id="holographic-pedestal">
+                                <div class="pedestal-ring ring-outer"></div>
+                                <div class="pedestal-ring ring-middle"></div>
+                                <div class="pedestal-ring ring-inner"></div>
+                                <div class="pedestal-core"></div>
+                                <div class="pedestal-light-cone"></div>
                             </div>
                         </div>
+
+                        <!-- Developer Identity & Quick Stats Dock -->
+                        <div class="glass avatar-info-dock" id="avatar-info-dock">
+                            <div class="dock-identity">
+                                <h3 id="profile-name">Shashank Kumar</h3>
+                                <p class="role" id="profile-role">
+                                    <i class="fa-solid fa-sparkles"></i> AI Engineer & Full Stack Dev
+                                </p>
+                            </div>
+                            
+                            <div class="avatar-stats" id="profile-stats">
+                                <div class="stat-item" id="stat-repos">
+                                    <span class="num">28</span>
+                                    <span class="label">Repos</span>
+                                </div>
+                                <div class="stat-item" id="stat-followers">
+                                    <span class="num">8</span>
+                                    <span class="label">Followers</span>
+                                </div>
+                                <div class="stat-item" id="stat-exp">
+                                    <span class="num">3+</span>
+                                    <span class="label">Years Code</span>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
