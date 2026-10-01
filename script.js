@@ -828,11 +828,165 @@ function initStandingAvatar() {
 
     let currentMsgIndex = 0;
     let isTransitioning = false;
+    let activeAudio = null;
+
+    // Preload speech synthesis voices early for fast fallback
+    if ("speechSynthesis" in window) {
+        try {
+            window.speechSynthesis.onvoiceschanged = () => {
+                try { window.speechSynthesis.getVoices(); } catch (e) {}
+            };
+            window.speechSynthesis.getVoices();
+        } catch (e) {}
+    }
+
+    function stopVoice() {
+        if (activeAudio) {
+            try {
+                activeAudio.pause();
+                activeAudio.currentTime = 0;
+            } catch (e) {}
+            activeAudio = null;
+        }
+
+        if ("speechSynthesis" in window) {
+            try {
+                window.speechSynthesis.cancel();
+            } catch (e) {}
+        }
+        window._activeSpeechUtterance = null;
+
+        if (speakBtn) {
+            speakBtn.classList.remove("speaking");
+            speakBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
+            speakBtn.title = "Click to hear voice greeting";
+            speakBtn.setAttribute("aria-label", "Listen to greeting");
+        }
+    }
+
+    function speakWithWebSpeechFallback() {
+        if (!("speechSynthesis" in window)) {
+            stopVoice();
+            return;
+        }
+
+        try {
+            window.speechSynthesis.cancel();
+            if (window.speechSynthesis.paused) {
+                window.speechSynthesis.resume();
+            }
+        } catch (e) {}
+
+        const rawText = messages[currentMsgIndex] || "";
+        const cleanText = rawText
+            .replace(/[\u{1F000}-\u{1FFFF}]|[\u{2600}-\u{27BF}]|[\u{E000}-\u{F8FF}]/gu, "")
+            .replace(/["“”]/g, "")
+            .trim();
+
+        if (!cleanText) {
+            stopVoice();
+            return;
+        }
+
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        // CRITICAL: Keep global reference to prevent Chromium / Safari garbage collection
+        window._activeSpeechUtterance = utterance;
+
+        utterance.lang = "en-US";
+        utterance.rate = 1.0;
+        utterance.pitch = 1.05;
+
+        try {
+            const voices = window.speechSynthesis.getVoices() || [];
+            if (voices.length > 0) {
+                const preferredVoice = voices.find(v =>
+                    v.lang && v.lang.startsWith("en") &&
+                    (v.name.includes("Guy") || v.name.includes("Natural") || v.name.includes("Google") ||
+                     v.name.includes("David") || v.name.includes("Samantha") || v.name.includes("Daniel") ||
+                     v.name.includes("Arthur"))
+                ) || voices.find(v => v.lang && v.lang.startsWith("en")) || voices[0];
+
+                if (preferredVoice) {
+                    utterance.voice = preferredVoice;
+                }
+            }
+        } catch (e) {}
+
+        utterance.onend = () => {
+            stopVoice();
+        };
+
+        utterance.onerror = (err) => {
+            console.warn("Speech synthesis error:", err.error);
+            stopVoice();
+        };
+
+        setTimeout(() => {
+            try {
+                window.speechSynthesis.speak(utterance);
+            } catch (e) {
+                console.error("speechSynthesis.speak error:", e);
+                stopVoice();
+            }
+        }, 30);
+    }
+
+    function toggleSpeakGreeting() {
+        // If already speaking, toggle off
+        if (speakBtn && speakBtn.classList.contains("speaking")) {
+            stopVoice();
+            return;
+        }
+
+        stopVoice();
+
+        if (speakBtn) {
+            speakBtn.classList.add("speaking");
+            speakBtn.innerHTML = `<i class="fa-solid fa-volume-xmark"></i>`;
+            speakBtn.title = "Click to stop greeting";
+            speakBtn.setAttribute("aria-label", "Stop greeting");
+        }
+
+        // Try pre-rendered neural voice first (100% compatibility across iOS, Android, Desktop, In-app WebViews)
+        const audioSrc = `assets/audio/greeting-${currentMsgIndex + 1}.mp3`;
+        const audio = new Audio(audioSrc);
+        activeAudio = audio;
+
+        let fallbackTriggered = false;
+        const triggerFallback = () => {
+            if (fallbackTriggered) return;
+            fallbackTriggered = true;
+            if (activeAudio === audio) activeAudio = null;
+            speakWithWebSpeechFallback();
+        };
+
+        audio.onended = () => {
+            if (activeAudio === audio) {
+                stopVoice();
+            }
+        };
+
+        audio.onerror = (e) => {
+            console.warn("Audio file playback failed, falling back to Web Speech API:", audioSrc, e);
+            triggerFallback();
+        };
+
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+            playPromise.catch((err) => {
+                console.warn("Audio playback interrupted or blocked, trying Web Speech API fallback:", err);
+                triggerFallback();
+            });
+        }
+    }
 
     function showMessage(index) {
         if (isTransitioning) return;
         isTransitioning = true;
         
+        // Stop any active voice playback when changing message
+        stopVoice();
+
         currentMsgIndex = (index + messages.length) % messages.length;
         
         bubbleText.style.opacity = "0";
@@ -873,47 +1027,13 @@ function initStandingAvatar() {
         });
     }
 
-    // Web Speech API Voice synthesis
-    if (speakBtn && "speechSynthesis" in window) {
+    // Speaker button click and touch handling
+    if (speakBtn) {
         speakBtn.addEventListener("click", (e) => {
+            e.preventDefault();
             e.stopPropagation();
-            
-            // If already speaking, cancel
-            if (window.speechSynthesis.speaking) {
-                window.speechSynthesis.cancel();
-                speakBtn.classList.remove("speaking");
-                speakBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
-                return;
-            }
-
-            // Clean text for speech (strip emojis and outer quotes)
-            const cleanText = messages[currentMsgIndex].replace(/[\u{1F300}-\u{1F9FF}]/gu, "").replace(/"/g, "");
-            const utterance = new SpeechSynthesisUtterance(cleanText);
-            utterance.rate = 1.0;
-            utterance.pitch = 1.05;
-            
-            // Voice selection
-            const voices = window.speechSynthesis.getVoices();
-            const preferredVoice = voices.find(v => v.lang.startsWith("en") && (v.name.includes("Natural") || v.name.includes("Google") || v.name.includes("David") || v.name.includes("Guy")));
-            if (preferredVoice) utterance.voice = preferredVoice;
-
-            speakBtn.classList.add("speaking");
-            speakBtn.innerHTML = `<i class="fa-solid fa-volume-xmark"></i>`;
-
-            utterance.onend = () => {
-                speakBtn.classList.remove("speaking");
-                speakBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
-            };
-
-            utterance.onerror = () => {
-                speakBtn.classList.remove("speaking");
-                speakBtn.innerHTML = `<i class="fa-solid fa-volume-high"></i>`;
-            };
-
-            window.speechSynthesis.speak(utterance);
+            toggleSpeakGreeting();
         });
-    } else if (speakBtn) {
-        speakBtn.style.display = "none";
     }
 
     // Dynamic 3D tilt tracking cursor on hero section
@@ -933,3 +1053,4 @@ function initStandingAvatar() {
         });
     }
 }
+
